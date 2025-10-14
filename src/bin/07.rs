@@ -12,10 +12,10 @@ use nom::{
 advent_of_code::solution!(7);
 
 #[derive(Debug, Clone)]
-struct Bag {
-    color: String,
-    contains: HashMap<String, u32>,
-    contained_by: HashMap<String, u32>,
+struct Bag<'a> {
+    color: &'a str,
+    contains: HashMap<&'a str, u32>,
+    contained_by: HashMap<&'a str, u32>,
 }
 
 /// (number) (color name) bag[s]
@@ -44,13 +44,13 @@ fn bag(input: &str) -> IResult<&str, Bag> {
 
     let mut map = HashMap::new();
     contains.iter().for_each(|&(count, color)| {
-        map.insert(color.to_string(), count);
+        map.insert(color, count);
     });
 
     Ok((
         input,
         Bag {
-            color: color.to_owned(),
+            color: color,
             contains: map,
             contained_by: HashMap::new(),
         },
@@ -58,18 +58,17 @@ fn bag(input: &str) -> IResult<&str, Bag> {
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
-    let mut bags_map: HashMap<String, Bag> = HashMap::new();
+    let mut bags_map: HashMap<&str, Bag> = HashMap::new();
 
     input.lines().for_each(|line| {
         let (_, b) = bag(line).unwrap();
-        bags_map.insert(b.color.clone(), b);
+        bags_map.insert(b.color, b);
     });
 
     for bag in bags_map.clone() {
         for contained_bag in bag.1.contains {
             let b = bags_map.get_mut(&contained_bag.0).unwrap();
-            b.contained_by
-                .insert(bag.1.color.to_owned(), contained_bag.1);
+            b.contained_by.insert(bag.1.color, contained_bag.1);
         }
     }
 
@@ -91,7 +90,7 @@ pub fn part_one(input: &str) -> Option<u64> {
     Some(set.iter().count() as u64)
 }
 
-fn calc_recursive(map: &HashMap<String, Bag>, bag: &Bag) -> u32 {
+fn calc_recursive(map: &HashMap<&str, Bag>, bag: &Bag) -> u32 {
     if bag.contains.is_empty() {
         1
     } else {
@@ -104,11 +103,11 @@ fn calc_recursive(map: &HashMap<String, Bag>, bag: &Bag) -> u32 {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let mut bags_map: HashMap<String, Bag> = HashMap::new();
+    let mut bags_map: HashMap<&str, Bag> = HashMap::new();
 
     input.lines().for_each(|line| {
         let (_, b) = bag(line).unwrap();
-        bags_map.insert(b.color.clone(), b);
+        bags_map.insert(b.color, b);
     });
 
     let sum = calc_recursive(&bags_map, bags_map.get("shiny gold").unwrap()) - 1;
