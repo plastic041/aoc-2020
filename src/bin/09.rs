@@ -28,7 +28,33 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    let number = 177777905;
+    // let number = 127;
+    let numbers = input
+        .lines()
+        .map(|line| line.parse::<u64>().unwrap())
+        .collect_vec();
+
+    let mut first = 0;
+    let mut last = 0;
+
+    loop {
+        let nums = &numbers[first..=last];
+        let sum = nums.iter().sum::<u64>();
+
+        match sum.cmp(&number) {
+            std::cmp::Ordering::Less => last += 1,
+            std::cmp::Ordering::Equal => {
+                let min = nums.iter().min().unwrap();
+                let max = nums.iter().max().unwrap();
+                // let first = numbers[from];
+                // let last = numbers[end];
+
+                return Some(min + max);
+            }
+            std::cmp::Ordering::Greater => first += 1,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -44,6 +70,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(62));
     }
 }
