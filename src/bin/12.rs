@@ -77,6 +77,30 @@ impl Ship {
     }
 }
 
+fn fast_sin(degree: i32) -> i64 {
+    match degree {
+        90 => 1,
+        180 => 0,
+        270 => -1,
+        -90 => -1,
+        -180 => 0,
+        -270 => 1,
+        _ => panic!("{}", degree),
+    }
+}
+
+fn fast_cos(degree: i32) -> i64 {
+    match degree {
+        90 => 0,
+        180 => -1,
+        270 => 0,
+        -90 => 0,
+        -180 => -1,
+        -270 => 0,
+        _ => panic!("{}", degree),
+    }
+}
+
 impl Ship2 {
     fn command(&mut self, input: &str) {
         let (_, (action, value)) = parse_command(input).unwrap();
@@ -86,26 +110,26 @@ impl Ship2 {
             'E' => self.waypoint.east += value as i64,
             'W' => self.waypoint.east -= value as i64,
             'L' => {
-                let sin = (value as f32).sin().round() as i64;
-                let cos = (value as f32).cos().round() as i64;
+                let cos = fast_cos(value);
+                let sin = fast_sin(value);
                 let east_rotated = self.waypoint.east * cos - self.waypoint.north * sin;
                 let north_rotated = self.waypoint.east * sin + self.waypoint.north * cos;
+
                 self.waypoint.east = east_rotated;
                 self.waypoint.north = north_rotated;
             }
             'R' => {
-                let sin = (-value as f32).sin().round() as i64;
-                let cos = (-value as f32).cos().round() as i64;
+                let cos = fast_cos(-value);
+                let sin = fast_sin(-value);
                 let east_rotated = self.waypoint.east * cos - self.waypoint.north * sin;
                 let north_rotated = self.waypoint.east * sin + self.waypoint.north * cos;
+
                 self.waypoint.east = east_rotated;
                 self.waypoint.north = north_rotated;
             }
             'F' => {
-                for _ in 0..value {
-                    self.east += self.waypoint.east;
-                    self.north += self.waypoint.north;
-                }
+                self.east += self.waypoint.east * value as i64;
+                self.north += self.waypoint.north * value as i64;
             }
             _ => panic!(),
         }
