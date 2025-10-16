@@ -16,7 +16,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     let adapters = adapters;
 
-    let mut diffs_map: HashMap<u8, u32> = HashMap::new();
+    let mut diffs_map: HashMap<u8, u8> = HashMap::new();
 
     for i in 0..adapters.len() - 1 {
         let a = adapters[i];
