@@ -15,7 +15,8 @@ pub fn part_one(input: &str) -> Option<u64> {
         .map(|line| line.parse::<u64>().unwrap())
         .collect_vec();
 
-    let preamble_size = 25;
+    // let preamble_size = 25;
+    let preamble_size = 5;
 
     for i in 0..numbers.len() - preamble_size {
         let nums = &numbers[i..i + preamble_size];
@@ -28,8 +29,8 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let number = 177777905;
-    // let number = 127;
+    // let number = 177777905;
+    let number = 127;
     let numbers = input
         .lines()
         .map(|line| line.parse::<u64>().unwrap())
